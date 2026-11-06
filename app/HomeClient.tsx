@@ -43,19 +43,19 @@ export default function HomeClient() {
     setInfoThemeModal(th);
   };
 
-  // 5 Tema terfavorit untuk kipas kartu hero
+  // 5 Tema terfavorit untuk kipas kartu hero (Friendship, Dreams, Kids, Gratitude, Love)
   const featuredFanSlugs = ['friendship', 'dreams', 'kids', 'gratitude', 'love'];
   const fanThemes = featuredFanSlugs
     .map((slug) => validThemes.find((th) => th.slug === slug))
     .filter(Boolean) as ThemeItem[];
 
-  // Konfigurasi kipas kartu (5 kartu, tengah terbesar)
+  // Konfigurasi kipas kartu simetris 5 kartu (Kids di tengah paling menonjol & tinggi)
   const fanConfig = [
-    { rotate: '-12deg', scale: '0.78', opacity: '0.85', translate: '0px', hidden: 'hidden lg:flex' },
-    { rotate: '-6deg',  scale: '0.88', opacity: '0.92', translate: '0px', hidden: 'hidden sm:flex' },
-    { rotate: '0deg',   scale: '1.0',  opacity: '1',    translate: '-16px', hidden: 'flex' },
-    { rotate: '6deg',   scale: '0.88', opacity: '0.92', translate: '0px', hidden: 'hidden sm:flex' },
-    { rotate: '12deg',  scale: '0.78', opacity: '0.85', translate: '0px', hidden: 'hidden lg:flex' },
+    { rotate: '-13deg', scale: '0.86', opacity: 0.9, translate: '24px', zIndex: 10 },
+    { rotate: '-6.5deg', scale: '0.93', opacity: 0.96, translate: '10px', zIndex: 15 },
+    { rotate: '0deg', scale: '1.04', opacity: 1, translate: '-12px', zIndex: 25 },
+    { rotate: '6.5deg', scale: '0.93', opacity: 0.96, translate: '10px', zIndex: 15 },
+    { rotate: '13deg', scale: '0.86', opacity: 0.9, translate: '24px', zIndex: 10 },
   ];
 
   const steps = [
@@ -163,36 +163,51 @@ export default function HomeClient() {
           </a>
         </div>
 
-        {/* ── Kipas Kartu (5 kartu tema asli dari PDF) ── */}
-        <div className="w-full max-w-5xl mx-auto flex items-end justify-center py-4 px-4 overflow-visible">
-          {fanConfig.map((fan, i) => {
-            const th = fanThemes[i] || validThemes[i];
-            if (!th) return null;
-            return (
-              <div
-                key={th.slug}
-                className={`${fan.hidden} flex-shrink-0 items-end`}
-                style={{
-                  transform: `rotate(${fan.rotate}) scale(${fan.scale}) translateY(${fan.translate})`,
-                  opacity: fan.opacity,
-                  marginLeft: i === 0 ? '0' : '-60px',
-                  zIndex: i === 2 ? 20 : 10 - Math.abs(i - 2),
-                  transition: 'transform 0.3s ease',
-                }}
-              >
+        {/* ── Kipas Kartu (5 kartu tema asli, responsif penuh di HP & Desktop) ── */}
+        <div className="w-full flex flex-col items-center justify-center overflow-x-clip overflow-y-visible py-4 sm:py-8 select-none">
+          <div className="relative flex items-end justify-center origin-bottom transition-all duration-300
+            w-[760px]
+            scale-[0.44] min-[375px]:scale-[0.47] min-[410px]:scale-[0.52] min-[540px]:scale-[0.65] sm:scale-[0.76] md:scale-[0.88] lg:scale-100
+            h-[185px] min-[375px]:h-[200px] min-[410px]:h-[220px] min-[540px]:h-[270px] sm:h-[315px] md:h-[360px] lg:h-[415px]
+          ">
+            {fanConfig.map((fan, i) => {
+              const th = fanThemes[i] || validThemes[i];
+              if (!th) return null;
+              return (
                 <div
-                  onClick={() => handleCardClick(th)}
-                  className="cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                  key={th.slug}
+                  className="flex-shrink-0 items-end"
+                  style={{
+                    transform: `rotate(${fan.rotate}) scale(${fan.scale}) translateY(${fan.translate})`,
+                    opacity: fan.opacity,
+                    marginLeft: i === 0 ? '0' : '-135px',
+                    zIndex: fan.zIndex,
+                    transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease',
+                  }}
                 >
-                  <ThemeCard
-                    title={th.titleEn}
-                    slug={th.slug}
-                    active={i === 2}
-                  />
+                  <div
+                    onClick={() => handleCardClick(th)}
+                    className="cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-3 active:scale-95 group"
+                    title={`Lihat detail kartu ${th.titleEn}`}
+                  >
+                    <ThemeCard
+                      title={th.titleEn}
+                      slug={th.slug}
+                      active={i === 2}
+                      size="compact"
+                      className="!w-[260px] !max-w-[260px] !min-w-[260px] aspect-[5/7] shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+                    />
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
+
+          {/* Label petunjuk interaktif di HP & Desktop */}
+          <div className="mt-3 sm:mt-5 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs text-zinc-400 font-medium">
+            <Sparkles className="w-3.5 h-3.5 text-pink-400 flex-shrink-0" />
+            <span>5 Tema Terfavorit &middot; Ketuk kartu untuk intip pertanyaan</span>
+          </div>
         </div>
       </section>
 

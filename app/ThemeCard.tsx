@@ -41,6 +41,7 @@ export default function ThemeCard({
   number,
   question,
   creatorName,
+  className = '',
 }: {
   title?: string;
   subtitle?: string;
@@ -53,7 +54,8 @@ export default function ThemeCard({
   bgImage?: string;
   onClick?: () => void;
   active?: boolean;
-  size?: 'default' | 'large';
+  size?: 'default' | 'large' | 'compact';
+  className?: string;
 }) {
   const [isClicked, setIsClicked] = useState(false);
   const themeKey = slug || (title ? title.toLowerCase() : 'family');
@@ -62,6 +64,8 @@ export default function ThemeCard({
   // Ukuran proporsional rasio kartu asli (5:7) dengan dukungan penuh layar mobile
   const sizeClasses = size === 'large'
     ? 'w-[min(340px,calc(100vw-32px))] sm:w-[375px] aspect-[5/7]'
+    : size === 'compact'
+    ? 'w-[min(260px,calc(100vw-48px))] sm:w-[290px] aspect-[5/7]'
     : 'w-[min(280px,calc(100vw-36px))] sm:w-[320px] aspect-[5/7]';
 
   const handleClick = (e: React.MouseEvent) => {
@@ -78,7 +82,7 @@ export default function ThemeCard({
         cardNumber={number || '04'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#2DD4C4] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#2DD4C4] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -92,7 +96,7 @@ export default function ThemeCard({
         creatorName={creatorName}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#FFC83D] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#FFC83D] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -105,7 +109,7 @@ export default function ThemeCard({
         cardNumber={number || '02'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#5EEAB0] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#5EEAB0] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -118,7 +122,7 @@ export default function ThemeCard({
         cardNumber={number || '03'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#FF8FBF] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#FF8FBF] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -131,7 +135,7 @@ export default function ThemeCard({
         cardNumber={number || '05'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#A99BFF] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#A99BFF] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -144,7 +148,7 @@ export default function ThemeCard({
         cardNumber={number || '06'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#7AD0FF] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#7AD0FF] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -157,7 +161,7 @@ export default function ThemeCard({
         cardNumber={number || '01'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#FFB067] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#FFB067] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -170,7 +174,7 @@ export default function ThemeCard({
         cardNumber={number || '03'}
         onClick={onClick}
         size={size}
-        className={`${active ? 'ring-4 ring-[#FF7A45] scale-[1.03]' : ''}`}
+        className={`${className} ${active ? 'ring-4 ring-[#FF7A45] scale-[1.03]' : ''}`}
       />
     );
   }
@@ -184,7 +188,8 @@ export default function ThemeCard({
         transition-all duration-300 ease-out
         hover:-translate-y-3 hover:scale-[1.03] hover:shadow-[0_25px_60px_rgba(236,72,153,0.35)]
         ${active ? 'ring-4 ring-pink-500 scale-[1.03] shadow-[0_0_35px_rgba(236,72,153,0.5)]' : ''}
-        ${isClicked ? 'scale-95 rotate-1 duration-150' : ''}`}
+        ${isClicked ? 'scale-95 rotate-1 duration-150' : ''}
+        ${className}`}
       style={{
         aspectRatio: '5 / 7',
       }}
