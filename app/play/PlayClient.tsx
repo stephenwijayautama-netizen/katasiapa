@@ -44,6 +44,7 @@ import DreamsCard from '../components/DreamsCard';
 import GratitudeCard from '../components/GratitudeCard';
 import FamilyCard from '../components/FamilyCard';
 import PassionCard from '../components/PassionCard';
+import GoogleSignInModal, { GoogleLogo } from '../components/GoogleSignInModal';
 import { soundEngine } from '../lib/soundEngine';
 
 type CategoryFilter = 'all' | 'grup' | 'berdua';
@@ -169,6 +170,7 @@ export default function PlayClient() {
   // Login Gate State
   const [loginNameInput, setLoginNameInput] = useState<string>('');
   const [loginEmailInput, setLoginEmailInput] = useState<string>('');
+  const [showGoogleModal, setShowGoogleModal] = useState<boolean>(false);
 
   // State Seleksi Deck
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
@@ -999,8 +1001,8 @@ export default function PlayClient() {
 
       {/* ── MODAL WAJIB LOGIN UNTUK BERMAIN ── */}
       {isMounted && !isLoggedIn && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-          <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#14141C] border border-pink-500/40 shadow-2xl relative overflow-hidden space-y-5">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl bg-[#14141C] border border-pink-500/40 shadow-2xl relative overflow-hidden space-y-5 animate-zoom-out">
             {/* Glow effect */}
             <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-pink-500/20 blur-3xl pointer-events-none" />
             <div className="absolute -bottom-20 -left-20 w-40 h-40 rounded-full bg-violet-600/20 blur-3xl pointer-events-none" />
@@ -1013,72 +1015,78 @@ export default function PlayClient() {
                 Masuk Terlebih Dahulu Untuk Bermain
               </h2>
               <p className="text-xs text-zinc-300 leading-relaxed max-w-xs mx-auto">
-                Silakan masuk dengan nama &amp; emailmu untuk menikmati seluruh permainan dan mencatat sesi bermain.
+                Silakan masuk dengan akun Google kamu agar sesi bermain dan seluruh koleksi tersimpan rapi.
               </p>
             </div>
 
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!loginNameInput.trim()) return;
-                login({
-                  name: loginNameInput.trim(),
-                  email:
-                    loginEmailInput.trim() ||
-                    `${loginNameInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@katasiapa.app`,
-                });
-                soundEngine.playCelebration();
-                confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
-              }}
-              className="space-y-3.5 relative z-10"
-            >
-              <div>
-                <label className="text-xs font-bold text-zinc-300 mb-1 block">
-                  Nama Kamu
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="Contoh: Bintang / Rian / Sarah"
-                  value={loginNameInput}
-                  onChange={(e) => setLoginNameInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-xs font-bold text-zinc-300 mb-1 block">
-                  Email (Opsional untuk Masuk Cepat)
-                </label>
-                <input
-                  type="email"
-                  placeholder="namakamu@gmail.com"
-                  value={loginEmailInput}
-                  onChange={(e) => setLoginEmailInput(e.target.value)}
-                  className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
-              </div>
-
+            <div className="space-y-4 relative z-10">
+              {/* TOMBOL UTAMA: GOOGLE SIGN-IN */}
               <button
-                type="submit"
-                disabled={!loginNameInput.trim()}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-violet-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-pink-500/25 hover:opacity-95 active:scale-95 transition disabled:opacity-40"
+                type="button"
+                onClick={() => setShowGoogleModal(true)}
+                className="w-full py-4 px-4 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-900 font-extrabold text-sm shadow-xl shadow-white/10 flex items-center justify-center gap-3 transition hover:scale-[1.02] active:scale-[0.98]"
               >
-                Masuk Cepat &amp; Mulai Main
+                <GoogleLogo className="w-5 h-5" />
+                <span>Lanjutkan dengan Akun Google</span>
               </button>
 
-              <div className="text-center pt-1">
-                <Link
-                  href="/login?redirect=/play"
-                  className="text-xs text-pink-400 hover:text-pink-300 font-bold transition"
-                >
-                  Atau masuk dengan verifikasi kode OTP Gmail →
-                </Link>
+              <div className="relative flex items-center justify-center my-2">
+                <div className="border-t border-white/10 w-full" />
+                <span className="bg-[#14141C] px-3 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                  atau masuk manual
+                </span>
+                <div className="border-t border-white/10 w-full" />
               </div>
-            </form>
+
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!loginNameInput.trim()) return;
+                  login({
+                    name: loginNameInput.trim(),
+                    email:
+                      loginEmailInput.trim() ||
+                      `${loginNameInput.toLowerCase().replace(/[^a-z0-9]/g, '')}@gmail.com`,
+                  });
+                  soundEngine.playCelebration();
+                  confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
+                }}
+                className="space-y-3"
+              >
+                <div>
+                  <input
+                    type="text"
+                    required
+                    placeholder="Nama Lengkap Kamu..."
+                    value={loginNameInput}
+                    onChange={(e) => setLoginNameInput(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={!loginNameInput.trim()}
+                  className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white font-bold text-xs transition disabled:opacity-40"
+                >
+                  Masuk dengan Nama ({loginNameInput.trim() || 'Nama Kamu'})
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Google Sign-in Dialog Modal */}
+      <GoogleSignInModal
+        isOpen={showGoogleModal}
+        onClose={() => setShowGoogleModal(false)}
+        onSuccess={(user) => {
+          login(user);
+          soundEngine.playCelebration();
+          confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+        }}
+      />
     </div>
   );
 }

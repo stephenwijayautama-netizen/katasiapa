@@ -5,6 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useApp } from '../AppContext';
 import { Mail, KeyRound, ArrowRight, CheckCircle2, Loader2, Sparkles, User, Zap } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import GoogleSignInModal, { GoogleLogo } from '../components/GoogleSignInModal';
 
 export default function LoginClient() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export default function LoginClient() {
   const [otp, setOtp] = useState('');
   const [loading, setLoading] = useState(false);
   const [devCode, setDevCode] = useState('');
+  const [showGoogleModal, setShowGoogleModal] = useState(false);
 
   const handleSendCode = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,6 +137,24 @@ export default function LoginClient() {
 
         {step === 'form' && (
           <div className="space-y-4 relative z-10">
+            {/* TOMBOL UTAMA: GOOGLE SIGN-IN */}
+            <button
+              type="button"
+              onClick={() => setShowGoogleModal(true)}
+              className="w-full py-3.5 px-4 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-900 font-extrabold text-xs sm:text-sm shadow-xl flex items-center justify-center gap-3 transition hover:scale-[1.02] active:scale-[0.98]"
+            >
+              <GoogleLogo className="w-5 h-5" />
+              <span>Lanjutkan dengan Akun Google</span>
+            </button>
+
+            <div className="relative flex items-center justify-center my-3">
+              <div className="border-t border-white/10 w-full" />
+              <span className="bg-[#14141C] px-3 text-[10px] font-bold text-zinc-500 uppercase tracking-wider">
+                atau masuk manual
+              </span>
+              <div className="border-t border-white/10 w-full" />
+            </div>
+
             {/* Input Nama Pembuat */}
             <div>
               <label className="text-xs font-bold text-zinc-300 mb-1.5 flex items-center justify-between">
@@ -269,6 +289,24 @@ export default function LoginClient() {
             <p className="text-xs text-zinc-400">Menghubungkan ke sesi Anda...</p>
           </div>
         )}
+
+        {/* Google Sign-in Sandbox Modal */}
+        <GoogleSignInModal
+          isOpen={showGoogleModal}
+          onClose={() => setShowGoogleModal(false)}
+          onSuccess={(userData) => {
+            setName(userData.name);
+            setEmail(userData.email);
+            login({
+              name: userData.name,
+              email: userData.email,
+            });
+            setStep('success');
+            setTimeout(() => {
+              window.location.href = redirectParam;
+            }, 800);
+          }}
+        />
       </div>
     </div>
   );
