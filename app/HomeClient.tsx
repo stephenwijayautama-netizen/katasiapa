@@ -167,13 +167,149 @@ export default function HomeClient() {
     <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col selection:bg-pink-500 selection:text-white w-full max-w-full overflow-x-hidden">
 
       {/* ══════════════════════════════════════════════════════════════════════════
-          1. HERO SECTION (MIN 100DVH DI HP, FULLY RESPONSIVE & CENTERED)
+          1. HERO SECTION (100DVH MOBILE VERTICAL / DESKTOP 2-COLUMN LUXURY)
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section className="relative min-h-[calc(100dvh-64px)] w-full max-w-full flex flex-col justify-center items-center px-4 sm:px-6 py-8 sm:py-16 overflow-hidden">
+      <section className="relative min-h-[calc(100dvh-64px)] w-full max-w-full flex flex-col justify-center items-center px-4 sm:px-8 lg:px-12 py-8 lg:py-16 overflow-hidden">
         {/* Glow ambient background dekoratif (terisolasi dalam container relative overflow-hidden) */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(380px,90vw)] sm:w-[580px] h-[320px] bg-gradient-to-tr from-pink-600/25 via-purple-600/20 to-blue-600/20 blur-[130px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(380px,90vw)] sm:w-[680px] lg:w-[900px] h-[360px] lg:h-[500px] bg-gradient-to-tr from-pink-600/20 via-purple-600/15 to-indigo-600/20 blur-[140px] pointer-events-none rounded-full" />
 
-        <div className="w-full max-w-6xl mx-auto flex flex-col items-center justify-center text-center relative z-10">
+        {/* ── DESKTOP 2-KOLOM (lg:grid lg:grid-cols-12) ── */}
+        <div className="hidden lg:grid lg:grid-cols-12 lg:gap-10 xl:gap-14 lg:items-center max-w-7xl mx-auto w-full relative z-10 py-6">
+          
+          {/* SISI KIRI: Headline, Subtitle, CTA & Social Proof */}
+          <div className="lg:col-span-5 xl:col-span-5 text-left space-y-6">
+            
+            {/* Logo Badge & Tagline */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md shadow-sm">
+              <Image
+                src={logoSrc}
+                alt="Kata Siapa"
+                width={120}
+                height={30}
+                className="h-6 w-auto object-contain"
+              />
+              <span className="text-zinc-500">&bull;</span>
+              <span className="text-xs font-bold text-pink-300 tracking-wide">
+                ruang untuk berbagi cerita
+              </span>
+            </div>
+
+            {/* Headline Besar Elegan */}
+            <h1 className="text-5xl xl:text-6xl font-black tracking-tight leading-[1.1] text-white">
+              Kocok Kartu. <br />
+              <span className="bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent">
+                Mulai Obrolan Nyata.
+              </span>
+            </h1>
+
+            {/* Deskripsi Menarik */}
+            <p className="text-base xl:text-lg text-zinc-300 leading-relaxed max-w-lg">
+              Gak ada lagi momen hening atau canggung saat nongkrong bareng teman, gebetan, atau keluarga. Pilih tema, kocok kartunya, dan temukan cerita tak terduga yang bikin makin dekat.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex items-center gap-4 pt-2">
+              <Link
+                href="/play"
+                className="min-h-[50px] px-8 py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-bold text-sm shadow-xl shadow-pink-500/25 hover:shadow-pink-500/40 hover:scale-105 active:scale-95 transition flex items-center justify-center gap-2.5 group cursor-pointer"
+              >
+                <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
+                <span>Mulai Main Sekarang</span>
+              </Link>
+
+              <a
+                href="#rules-and-play"
+                className="min-h-[50px] px-6 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 hover:border-white/20 transition flex items-center justify-center gap-2 text-zinc-300 hover:text-white cursor-pointer"
+              >
+                <HelpCircle className="w-4 h-4 text-pink-400" />
+                <span>Rules & Cara Main</span>
+              </a>
+            </div>
+
+            {/* Vibe Tags Kecil */}
+            <div className="pt-3 border-t border-white/10">
+              <p className="text-xs text-zinc-400 mb-2 font-medium">Cocok dimainkan untuk:</p>
+              <div className="flex flex-wrap gap-2">
+                {['Nongkrong Kafe', 'Deep Talk 02:00', 'Pasangan & Gebetan', 'Sahabat'].map((tag) => (
+                  <span
+                    key={tag}
+                    className="px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-[11px] font-semibold text-zinc-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+          </div>
+
+          {/* SISI KANAN: Kipas 5 Kartu Elegan Full-Scale */}
+          <div className="lg:col-span-7 xl:col-span-7 flex flex-col items-center justify-center">
+            
+            {/* Kanvas Kipas 720px Desktop */}
+            <div className="relative w-[720px] h-[390px] mx-auto overflow-hidden">
+              <div className="absolute top-0 left-0 w-[720px] h-[390px]">
+                {fanThemes.map((th, i) => {
+                  const cfg = fixedFanCards[i];
+                  if (!th || !cfg) return null;
+                  return (
+                    <div
+                      key={th.slug}
+                      className="absolute cursor-pointer transition-all duration-300 hover:scale-110 hover:-translate-y-2 hover:z-40 active:scale-95"
+                      style={{
+                        left: cfg.left,
+                        top: cfg.top,
+                        transform: `rotate(${cfg.rotate}) scale(${cfg.scale})`,
+                        zIndex: cfg.zIndex,
+                        opacity: cfg.opacity,
+                      }}
+                      onClick={() => handleCardClick(th)}
+                      title={`Lihat detail kartu ${th.titleEn}`}
+                    >
+                      <ThemeCard
+                        title={th.titleEn}
+                        slug={th.slug}
+                        active={i === 2}
+                        size="compact"
+                        className="!w-[230px] aspect-[5/7] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_60px_rgba(236,72,153,0.4)]"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Chips Pemilih Tema Interaktif di Bawah Kipas */}
+            <div className="flex items-center justify-center gap-2 flex-wrap px-3 mt-5 max-w-xl">
+              {fanThemes.map((th, i) => (
+                <button
+                  key={th.slug}
+                  onClick={() => handleCardClick(th)}
+                  className="px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 bg-white/5 border border-white/10 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-pink-500/40 active:scale-95 flex items-center gap-1.5 cursor-pointer shadow-sm"
+                >
+                  <span
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{
+                      backgroundColor:
+                        i === 0 ? '#10B981' : i === 1 ? '#8B5CF6' : i === 2 ? '#2DD4C4' : i === 3 ? '#3B82F6' : '#EC4899',
+                    }}
+                  />
+                  <span>{th.titleEn}</span>
+                </button>
+              ))}
+            </div>
+
+            <p className="text-xs text-zinc-400 mt-2.5 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-pink-400" />
+              <span>5 Tema Terfavorit &bull; Ketuk kartu untuk intip pertanyaan</span>
+            </p>
+
+          </div>
+
+        </div>
+
+        {/* ── MOBILE & TABLET LAYOUT (< lg: 1 KOLOM VERTIKAL TERPUSAT) ── */}
+        <div className="lg:hidden w-full max-w-2xl mx-auto flex flex-col items-center justify-center text-center relative z-10">
           
           {/* Logo & Tagline Pill */}
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4 sm:mb-6 backdrop-blur-sm">
@@ -191,7 +327,7 @@ export default function HomeClient() {
           </div>
 
           {/* Headline Singkat Menarik */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-tight max-w-4xl mb-4 sm:mb-6 break-words px-2">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight leading-tight max-w-4xl mb-4 sm:mb-6 break-words px-2">
             Kocok Kartu. <br />
             <span className="bg-gradient-to-r from-pink-400 via-purple-300 to-indigo-400 bg-clip-text text-transparent">
               Mulai Obrolan Nyata.
@@ -203,14 +339,14 @@ export default function HomeClient() {
             Gak ada lagi momen hening atau canggung saat nongkrong bareng teman, gebetan, atau keluarga. Pilih tema, kocok kartunya, dan temukan cerita tak terduga yang bikin makin dekat.
           </p>
 
-          {/* CTA Buttons: Main Sekarang (Gradient Pink) & Rules & Cara Main (Sekunder) */}
+          {/* CTA Buttons Mobile */}
           <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-xs sm:max-w-md justify-center mb-8 sm:mb-10 px-2">
             <Link
               href="/play"
               className="w-full sm:w-auto min-h-[48px] px-8 py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 text-white font-bold text-sm shadow-xl shadow-pink-500/25 hover:shadow-pink-500/40 hover:scale-[1.02] active:scale-95 transition flex items-center justify-center gap-2 group cursor-pointer"
             >
               <Play className="w-4 h-4 fill-white group-hover:scale-110 transition-transform" />
-              <span suppressHydrationWarning>{t.startPlaying || 'Mulai Main Sekarang'}</span>
+              <span>Mulai Main Sekarang</span>
             </Link>
 
             <a
@@ -222,12 +358,10 @@ export default function HomeClient() {
             </a>
           </div>
 
-          {/* ── Kipas Kartu (5 kartu tema asli, responsif penuh di HP & Laptop) ── */}
+          {/* Kipas Kartu Responsif Mobile */}
           <div className="w-full max-w-full flex flex-col items-center justify-center py-2 select-none overflow-hidden">
-            {/* Kontainer Kanvas Responsif Berdimensi Terkontrol & Clip Overflow */}
-            <div className="relative w-[336px] min-[390px]:w-[360px] sm:w-[540px] md:w-[640px] lg:w-[720px] h-[185px] min-[390px]:h-[198px] sm:h-[295px] md:h-[350px] lg:h-[395px] mx-auto flex items-center justify-center overflow-hidden">
-              {/* Kanvas 720px yang diskalasi secara presisi */}
-              <div className="absolute top-0 left-0 w-[720px] h-[390px] origin-top-left scale-[0.466] min-[390px]:scale-[0.50] sm:scale-[0.75] md:scale-[0.888] lg:scale-100">
+            <div className="relative w-[336px] min-[390px]:w-[360px] sm:w-[540px] md:w-[640px] h-[185px] min-[390px]:h-[198px] sm:h-[295px] md:h-[350px] mx-auto flex items-center justify-center overflow-hidden">
+              <div className="absolute top-0 left-0 w-[720px] h-[390px] origin-top-left scale-[0.466] min-[390px]:scale-[0.50] sm:scale-[0.75] md:scale-[0.888]">
                 {fanThemes.map((th, i) => {
                   const cfg = fixedFanCards[i];
                   if (!th || !cfg) return null;
@@ -258,7 +392,7 @@ export default function HomeClient() {
               </div>
             </div>
 
-            {/* Chips Pemilih Tema Interaktif di Bawah Kipas */}
+            {/* Chips Pemilih Tema Mobile */}
             <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap px-3 mt-4 max-w-xl">
               {fanThemes.map((th, i) => (
                 <button
@@ -278,33 +412,33 @@ export default function HomeClient() {
               ))}
             </div>
 
-            {/* Label Petunjuk Interaktif */}
             <div className="mt-3 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs text-zinc-400 font-medium">
               <Sparkles className="w-3.5 h-3.5 text-pink-400 flex-shrink-0" />
               <span>5 Tema Terfavorit &middot; Ketuk kartu untuk intip pertanyaan</span>
             </div>
           </div>
 
-          {/* ── Petunjuk Scroll ke Bawah Menuju Section Pilihan Kategori ── */}
-          <div className="mt-6 sm:mt-10 pt-2">
-            <a
-              href="#pilihan-kategori"
-              className="inline-flex flex-col items-center gap-1.5 text-zinc-400 hover:text-white transition group cursor-pointer"
-            >
-              <span className="text-[11px] sm:text-xs font-medium tracking-wide">
-                Gulir ke bawah untuk pilih kategori
-              </span>
-              <ChevronDown className="w-4 h-4 text-pink-400 animate-bounce group-hover:translate-y-1 transition-transform" />
-            </a>
-          </div>
-
         </div>
+
+        {/* ── Petunjuk Scroll ke Bawah (Tampil di Mobile & Desktop) ── */}
+        <div className="mt-6 sm:mt-12 pt-2 relative z-10">
+          <a
+            href="#pilihan-kategori"
+            className="inline-flex flex-col items-center gap-1.5 text-zinc-400 hover:text-white transition group cursor-pointer"
+          >
+            <span className="text-[11px] sm:text-xs font-medium tracking-wide">
+              Gulir ke bawah untuk pilih kategori
+            </span>
+            <ChevronDown className="w-4 h-4 text-pink-400 animate-bounce group-hover:translate-y-1 transition-transform" />
+          </a>
+        </div>
+
       </section>
 
       {/* ══════════════════════════════════════════════════════════════════════════
           2. SECTION PILIHAN KATEGORI KARTU (MOBILE 1 KOLOM, TABLET 2, DESKTOP 3-4)
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section id="pilihan-kategori" className="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full overflow-hidden">
+      <section id="pilihan-kategori" className="py-16 sm:py-24 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full overflow-hidden">
         {/* Header Section */}
         <div className="text-center mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold mb-3">
@@ -325,7 +459,7 @@ export default function HomeClient() {
             <div key={th.slug} className="w-full flex justify-center">
               <div
                 onClick={() => handleCardClick(th)}
-                className="w-full max-w-[340px] sm:max-w-[360px] mx-auto cursor-pointer transition-transform duration-200 hover:scale-[1.03] active:scale-95"
+                className="w-full max-w-[340px] sm:max-w-[360px] mx-auto cursor-pointer transition-all duration-300 hover:scale-[1.04] hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(236,72,153,0.3)] active:scale-95"
               >
                 <ThemeCard
                   title={th.titleEn}
@@ -341,10 +475,10 @@ export default function HomeClient() {
       {/* ══════════════════════════════════════════════════════════════════════════
           3. HOW TO PLAY & RULES SECTION (GAYA ANAK MUDA, ESTETIK & RELATABLE)
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section id="rules-and-play" className="py-20 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full relative overflow-hidden">
+      <section id="rules-and-play" className="py-20 sm:py-24 px-4 sm:px-8 lg:px-12 max-w-7xl mx-auto w-full relative overflow-hidden">
         {/* Glow aksen di background */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[380px] h-[280px] sm:h-[380px] bg-pink-500/10 blur-[120px] pointer-events-none rounded-full" />
-        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[280px] sm:w-[380px] h-[280px] sm:h-[380px] bg-purple-500/10 blur-[120px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-pink-500/10 blur-[140px] pointer-events-none rounded-full" />
+        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[280px] sm:w-[480px] h-[280px] sm:h-[480px] bg-purple-500/10 blur-[140px] pointer-events-none rounded-full" />
 
         {/* Heading Section */}
         <div className="text-center mb-14 sm:mb-16 relative z-10">
@@ -436,7 +570,7 @@ export default function HomeClient() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {rules.map((rl) => {
               const RIcon = rl.icon;
               return (
