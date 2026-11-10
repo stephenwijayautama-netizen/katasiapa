@@ -49,32 +49,52 @@ export default function HomeClient() {
     .map((slug) => validThemes.find((th) => th.slug === slug))
     .filter(Boolean) as ThemeItem[];
 
-  // Konfigurasi 5 kartu kipas simetris untuk mobile & desktop
-  const fanCardStyles = [
+  // Posisi simetris 5 kartu di dalam kanvas tetap 720px (akan diskalasi otomatis sesuai layar)
+  const fixedFanCards = [
     {
-      // 0: Friendship (Paling Kiri)
-      className:
-        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer -translate-x-[94px] sm:-translate-x-[140px] md:-translate-x-[210px] translate-y-[14px] sm:translate-y-[18px] md:translate-y-[24px] -rotate-[14deg] sm:-rotate-[13deg] md:-rotate-[12deg] scale-[0.62] xs:scale-[0.66] sm:scale-[0.80] md:scale-[0.90] lg:scale-100 z-10 opacity-90 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+      slug: 'friendship',
+      left: '0px',
+      top: '28px',
+      rotate: '-14deg',
+      scale: '0.88',
+      zIndex: 10,
+      opacity: 0.92,
     },
     {
-      // 1: Dreams (Kiri Tengah)
-      className:
-        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer -translate-x-[47px] sm:-translate-x-[70px] md:-translate-x-[105px] translate-y-[6px] sm:translate-y-[8px] md:translate-y-[10px] -rotate-[7deg] sm:-rotate-[6.5deg] md:-rotate-[6deg] scale-[0.66] xs:scale-[0.70] sm:scale-[0.85] md:scale-[0.95] lg:scale-[1.02] z-20 opacity-95 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+      slug: 'dreams',
+      left: '122px',
+      top: '12px',
+      rotate: '-7deg',
+      scale: '0.94',
+      zIndex: 20,
+      opacity: 0.96,
     },
     {
-      // 2: Kids (Tengah - Paling Menonjol & Tinggi)
-      className:
-        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-0 -translate-y-[6px] sm:-translate-y-[10px] md:-translate-y-[14px] rotate-0 scale-[0.72] xs:scale-[0.76] sm:scale-[0.92] md:scale-[1.02] lg:scale-[1.08] z-30 opacity-100 hover:z-40 hover:scale-110 hover:-translate-y-3 active:scale-95',
+      slug: 'kids',
+      left: '245px',
+      top: '0px',
+      rotate: '0deg',
+      scale: '1.05',
+      zIndex: 30,
+      opacity: 1,
     },
     {
-      // 3: Gratitude (Kanan Tengah)
-      className:
-        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-[47px] sm:translate-x-[70px] md:translate-x-[105px] translate-y-[6px] sm:translate-y-[8px] md:translate-y-[10px] rotate-[7deg] sm:rotate-[6.5deg] md:rotate-[6deg] scale-[0.66] xs:scale-[0.70] sm:scale-[0.85] md:scale-[0.95] lg:scale-[1.02] z-20 opacity-95 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+      slug: 'gratitude',
+      left: '368px',
+      top: '12px',
+      rotate: '7deg',
+      scale: '0.94',
+      zIndex: 20,
+      opacity: 0.96,
     },
     {
-      // 4: Love (Paling Kanan)
-      className:
-        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-[94px] sm:translate-x-[140px] md:translate-x-[210px] translate-y-[14px] sm:translate-y-[18px] md:translate-y-[24px] rotate-[14deg] sm:rotate-[13deg] md:rotate-[12deg] scale-[0.62] xs:scale-[0.66] sm:scale-[0.80] md:scale-[0.90] lg:scale-100 z-10 opacity-90 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+      slug: 'love',
+      left: '490px',
+      top: '28px',
+      rotate: '14deg',
+      scale: '0.88',
+      zIndex: 10,
+      opacity: 0.92,
     },
   ];
 
@@ -144,39 +164,39 @@ export default function HomeClient() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col selection:bg-pink-500 selection:text-white">
+    <div className="min-h-screen bg-[#0B0B0F] text-white flex flex-col selection:bg-pink-500 selection:text-white w-full max-w-full overflow-x-hidden">
 
       {/* ══════════════════════════════════════════════════════════════════════════
           1. HERO SECTION
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section className="relative pt-20 pb-12 px-6 overflow-hidden flex flex-col items-center text-center">
+      <section className="relative pt-16 sm:pt-20 pb-12 px-3 sm:px-6 w-full max-w-full overflow-hidden flex flex-col items-center text-center">
         {/* Glow ambient background */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[380px] bg-gradient-to-tr from-pink-600/30 via-purple-600/20 to-blue-600/20 blur-[150px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(340px,90vw)] sm:w-[500px] h-[300px] bg-gradient-to-tr from-pink-600/30 via-purple-600/20 to-blue-600/20 blur-[120px] pointer-events-none rounded-full" />
 
         {/* Judul Hero */}
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight max-w-4xl mb-6 leading-tight">
+        <h1 className="text-2xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight max-w-4xl mb-6 leading-tight px-2 break-words">
           Kocok Kartu. <br />
           <span className="bg-gradient-to-r from-pink-500 via-purple-400 to-violet-500 bg-clip-text text-transparent">
             Mulai Obrolan Nyata.
           </span>
         </h1>
 
-        <p className="text-base sm:text-lg text-zinc-400 max-w-2xl mb-10 leading-relaxed">
+        <p className="text-xs sm:text-base md:text-lg text-zinc-400 max-w-2xl mb-8 leading-relaxed px-2">
           Gak ada lagi momen hening atau canggung saat nongkrong bareng teman, gebetan, atau keluarga. Pilih tema, kocok kartunya, dan temukan cerita tak terduga yang bikin makin dekat.
         </p>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-16">
+        <div className="flex flex-col sm:flex-row items-center gap-3.5 mb-10 w-full sm:w-auto px-4 sm:px-0">
           <Link
             href="/play"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-600 text-white font-bold text-sm shadow-xl shadow-pink-500/30 hover:scale-105 transition flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-pink-500 to-violet-600 text-white font-bold text-sm shadow-xl shadow-pink-500/30 hover:scale-105 transition flex items-center justify-center gap-2"
           >
             <Play className="w-4 h-4 fill-white" />
             Mulai Main Sekarang
           </Link>
           <a
             href="#rules-and-play"
-            className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition flex items-center justify-center gap-2 text-zinc-300 hover:text-white"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-sm hover:bg-white/10 transition flex items-center justify-center gap-2 text-zinc-300 hover:text-white"
           >
             <HelpCircle className="w-4 h-4 text-pink-400" />
             Rules & Cara Main
@@ -184,29 +204,39 @@ export default function HomeClient() {
         </div>
 
         {/* ── Kipas Kartu (5 kartu tema asli, responsif penuh di HP & Laptop) ── */}
-        <div className="w-full flex flex-col items-center justify-center py-4 sm:py-6 select-none overflow-visible">
-          {/* Kontainer Kipas Kartu Simetris */}
-          <div className="relative w-full max-w-[360px] xs:max-w-[400px] sm:max-w-[560px] md:max-w-[720px] lg:max-w-[820px] h-[230px] xs:h-[250px] sm:h-[310px] md:h-[370px] lg:h-[410px] flex items-center justify-center">
-            {fanThemes.map((th, i) => {
-              const styleConfig = fanCardStyles[i];
-              if (!th || !styleConfig) return null;
-              return (
-                <div
-                  key={th.slug}
-                  className={styleConfig.className}
-                  onClick={() => handleCardClick(th)}
-                  title={`Lihat detail kartu ${th.titleEn}`}
-                >
-                  <ThemeCard
-                    title={th.titleEn}
-                    slug={th.slug}
-                    active={i === 2}
-                    size="compact"
-                    className="!w-[220px] sm:!w-[240px] lg:!w-[260px] aspect-[5/7] shadow-[0_15px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_50px_rgba(236,72,153,0.35)]"
-                  />
-                </div>
-              );
-            })}
+        <div className="w-full max-w-full flex flex-col items-center justify-center py-4 select-none overflow-hidden">
+          {/* Kontainer Kanvas Responsif Berdimensi Terkontrol & Overflow Clip */}
+          <div className="relative w-[336px] min-[390px]:w-[360px] sm:w-[540px] md:w-[640px] lg:w-[720px] h-[185px] min-[390px]:h-[198px] sm:h-[295px] md:h-[350px] lg:h-[395px] mx-auto flex items-center justify-center overflow-hidden">
+            {/* Kanvas 720px yang diskalasi secara presisi */}
+            <div className="absolute top-0 left-0 w-[720px] h-[390px] origin-top-left scale-[0.466] min-[390px]:scale-[0.50] sm:scale-[0.75] md:scale-[0.888] lg:scale-100">
+              {fanThemes.map((th, i) => {
+                const cfg = fixedFanCards[i];
+                if (!th || !cfg) return null;
+                return (
+                  <div
+                    key={th.slug}
+                    className="absolute cursor-pointer transition-transform duration-300 hover:scale-105 active:scale-95"
+                    style={{
+                      left: cfg.left,
+                      top: cfg.top,
+                      transform: `rotate(${cfg.rotate}) scale(${cfg.scale})`,
+                      zIndex: cfg.zIndex,
+                      opacity: cfg.opacity,
+                    }}
+                    onClick={() => handleCardClick(th)}
+                    title={`Lihat detail kartu ${th.titleEn}`}
+                  >
+                    <ThemeCard
+                      title={th.titleEn}
+                      slug={th.slug}
+                      active={i === 2}
+                      size="compact"
+                      className="!w-[230px] aspect-[5/7] shadow-[0_15px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_50px_rgba(236,72,153,0.35)]"
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* Chips Pemilih Tema Interaktif di Bawah Kipas */}
@@ -234,10 +264,10 @@ export default function HomeClient() {
       {/* ══════════════════════════════════════════════════════════════════════════
           2. HOW TO PLAY & RULES SECTION (GAYA ANAK MUDA, ESTETIK & RELATABLE)
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section id="rules-and-play" className="py-24 px-6 max-w-7xl mx-auto w-full relative">
+      <section id="rules-and-play" className="py-24 px-4 sm:px-6 max-w-7xl mx-auto w-full relative overflow-hidden">
         {/* Glow aksen di background */}
-        <div className="absolute top-1/3 left-10 -translate-y-1/2 w-[380px] h-[380px] bg-pink-500/10 blur-[140px] pointer-events-none rounded-full" />
-        <div className="absolute bottom-1/3 right-10 w-[380px] h-[380px] bg-purple-500/10 blur-[140px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px] sm:w-[380px] h-[280px] sm:h-[380px] bg-pink-500/10 blur-[120px] pointer-events-none rounded-full" />
+        <div className="absolute bottom-1/3 left-1/2 -translate-x-1/2 w-[280px] sm:w-[380px] h-[280px] sm:h-[380px] bg-purple-500/10 blur-[120px] pointer-events-none rounded-full" />
 
         {/* Heading Section */}
         <div className="text-center mb-16 relative z-10">
@@ -368,7 +398,7 @@ export default function HomeClient() {
       {/* ══════════════════════════════════════════════════════════════════════════
           3. THEMES GRID SECTION (PILIH TEMA KARTU ASLI)
          ══════════════════════════════════════════════════════════════════════════ */}
-      <section className="py-20 px-6 max-w-7xl mx-auto w-full">
+      <section className="py-20 px-4 sm:px-6 max-w-7xl mx-auto w-full overflow-hidden">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-extrabold mb-4" suppressHydrationWarning>{t.themesSectionTitle}</h2>
           <p className="text-zinc-400 max-w-xl mx-auto text-sm sm:text-base" suppressHydrationWarning>{t.themesSectionSubtitle}</p>

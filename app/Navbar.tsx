@@ -26,15 +26,15 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0B0B0F]/90 border-b border-white/10 px-3 sm:px-8 py-2.5 sm:py-3 relative flex items-center justify-between transition-colors">
+      <header className="sticky top-0 z-50 backdrop-blur-md bg-[#0B0B0F]/90 border-b border-white/10 px-2.5 sm:px-8 py-2.5 sm:py-3 relative flex items-center justify-between transition-colors w-full max-w-full overflow-hidden">
         {/* ── KIRI: BRAND LOGO (ADAPTIF DARK/LIGHT & RESPONSIVE HP) ── */}
         <Link href="/" className="flex items-center gap-2 z-10 flex-shrink-0 group">
           <Image
             src={logoSrc}
             alt="Kata Siapa - Ruang Untuk Berbagi Cerita"
-            width={160}
-            height={42}
-            className="h-8 sm:h-9 w-auto max-w-[130px] sm:max-w-[165px] object-contain transition-transform duration-200 group-hover:scale-105"
+            width={140}
+            height={36}
+            className="h-7 sm:h-9 w-auto max-w-[110px] sm:max-w-[165px] object-contain transition-transform duration-200 group-hover:scale-105"
             priority
           />
         </Link>
@@ -60,11 +60,11 @@ export default function Navbar() {
         </nav>
 
         {/* ── KANAN: ACTIONS (THEME TOGGLE, LANG, PROFILE, CTA & MOBILE HAMBURGER) ── */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5 z-10 flex-shrink-0">
+        <div className="flex items-center gap-1 sm:gap-2.5 z-10 flex-shrink-0">
           {/* Light / Dark Mode Toggle Button */}
           <button
             onClick={toggleThemeMode}
-            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white transition shadow-sm"
+            className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white transition shadow-sm"
             title={currentTheme === 'light' ? 'Beralih ke Dark Mode' : 'Beralih ke Light Mode'}
             aria-label="Toggle Theme Mode"
           >
@@ -117,7 +117,7 @@ export default function Navbar() {
           ) : (
             <Link
               href="/login"
-              className={`flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
+              className={`flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
                 pathname === '/login'
                   ? 'bg-pink-500/15 border-pink-500/40 text-pink-300'
                   : 'bg-white/5 hover:bg-white/10 border-white/10 text-zinc-300 hover:text-white'
@@ -130,7 +130,7 @@ export default function Navbar() {
           {/* Mainkan Sekarang CTA */}
           <Link
             href="/play"
-            className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-pink-500 to-violet-600 text-white font-semibold text-xs shadow-lg shadow-pink-500/25 hover:opacity-90 transition"
+            className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-gradient-to-r from-pink-500 to-violet-600 text-white font-semibold text-xs shadow-lg shadow-pink-500/25 hover:opacity-90 transition"
           >
             <Play className="w-3.5 h-3.5 fill-white" />
             <span className="hidden sm:inline" suppressHydrationWarning>{t.startPlaying}</span>
@@ -140,7 +140,7 @@ export default function Navbar() {
           {/* Hamburger Button untuk HP (Mobile Drawer) */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white transition ml-0.5"
+            className="md:hidden p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-300 hover:text-white transition"
             aria-label="Toggle Mobile Menu"
           >
             {mobileMenuOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
