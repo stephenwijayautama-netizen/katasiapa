@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, Check, Loader2, UserPlus, ShieldCheck } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, AlertTriangle, Copy, Check, Loader2, Sparkles, LogIn, ExternalLink } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { soundEngine } from '../lib/soundEngine';
 
 interface GoogleSignInModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSuccess: (userData: { name: string; email: string }) => void;
+  onSuccess?: (userData: { name: string; email: string; avatar?: string }) => void;
   redirectUrl?: string;
 }
 
@@ -39,56 +39,72 @@ export default function GoogleSignInModal({
   isOpen,
   onClose,
   onSuccess,
+  redirectUrl = '/',
 }: GoogleSignInModalProps) {
-  const [selectedEmail, setSelectedEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [isInAppBrowser, setIsInAppBrowser] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [showSandbox, setShowSandbox] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customEmail, setCustomEmail] = useState('');
-  const [isCustom, setIsCustom] = useState(false);
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const ua = navigator.userAgent || '';
+      // Deteksi in-app browser: WhatsApp, Instagram, Facebook, Line, TikTok
+      const inApp = /FBAN|FBAV|Instagram|WhatsApp|Line|musical_ly|BytedanceWebview/i.test(ua);
+      setIsInAppBrowser(inApp);
+
+      // Cek parameter error dari URL jika ada
+      const params = new URLSearchParams(window.location.search);
+      const authErr = params.get('auth_error');
+      if (authErr) {
+        if (authErr === 'google_not_configured') {
+          setErrorMessage('Google OAuth belum dikonfigurasi di environment Vercel. Anda bisa menggunakan mode sandbox di bawah untuk uji coba.');
+          setShowSandbox(true);
+        } else if (authErr === 'cancelled') {
+          setErrorMessage('Proses login Google dibatalkan.');
+        } else {
+          setErrorMessage(`Gagal login Google (${authErr}). Silakan coba lagi.`);
+        }
+      }
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const defaultAccounts = [
-    {
-      name: 'Bintang Utama',
-      email: 'bintang.utama@gmail.com',
-      avatarColor: 'bg-indigo-600',
-      initial: 'B',
-    },
-    {
-      name: 'Stephen Wijaya',
-      email: 'stephenwijayautama@gmail.com',
-      avatarColor: 'bg-emerald-600',
-      initial: 'S',
-    },
-  ];
-
-  const handleSelectAccount = (name: string, email: string) => {
+  const handleGoogleLogin = () => {
     setLoading(true);
+    setErrorMessage('');
     soundEngine.playFlip();
+
+    // Arahkan ke endpoint OAuth Google resmi
+    const targetUrl = `/api/auth/google?returnTo=${encodeURIComponent(redirectUrl || window.location.pathname)}`;
+    window.location.href = targetUrl;
+  };
+
+  const handleCopyLink = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  // Sandbox Dev login jika Google Client ID belum diset di Vercel
+  const handleSandboxLogin = (name: string, email: string) => {
+    setLoading(true);
+    soundEngine.playCelebration();
+    confetti({ particleCount: 70, spread: 70, origin: { y: 0.6 } });
 
     setTimeout(() => {
       setLoading(false);
-      soundEngine.playCelebration();
-      confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
-      onSuccess({ name, email });
+      if (onSuccess) {
+        onSuccess({ name, email, avatar: '' });
+      }
       onClose();
-    }, 700);
-  };
-
-  const handleCustomSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customName.trim()) {
-      alert('Masukkan nama kamu!');
-      return;
-    }
-    const cleanEmail = customEmail.trim()
-      ? customEmail.includes('@')
-        ? customEmail.trim()
-        : `${customEmail.trim()}@gmail.com`
-      : `${customName.toLowerCase().replace(/[^a-z0-9]/g, '')}@gmail.com`;
-
-    handleSelectAccount(customName.trim(), cleanEmail);
+    }, 600);
   };
 
   return (
@@ -97,137 +113,154 @@ export default function GoogleSignInModal({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-[420px] bg-[#1A1A24] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl overflow-hidden animate-zoom-out text-white"
+        className="relative w-full max-w-[420px] bg-[#14141C] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl overflow-hidden animate-zoom-out text-white"
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Glow ambient background modal */}
+        <div className="absolute top-0 right-0 w-44 h-44 bg-pink-500/10 blur-[80px] pointer-events-none rounded-full" />
+        <div className="absolute bottom-0 left-0 w-44 h-44 bg-indigo-500/10 blur-[80px] pointer-events-none rounded-full" />
+
         {/* Tombol Tutup */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/10 text-zinc-400 hover:text-white transition"
-          title="Tutup"
+          className="absolute top-4 right-4 p-2 rounded-full bg-white/5 hover:bg-white/15 text-zinc-400 hover:text-white transition z-10"
+          aria-label="Tutup modal"
         >
-          <X className="w-4 h-4" />
+          <X className="w-5 h-5" />
         </button>
 
-        {/* Header Google Sign-In */}
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-lg shadow-white/10 mb-3">
-            <GoogleLogo className="w-6 h-6" />
+        {/* Header Modal */}
+        <div className="text-center mb-6 relative z-10">
+          <div className="inline-flex p-3 rounded-2xl bg-white/5 border border-white/10 mb-3.5 shadow-inner">
+            <GoogleLogo className="w-7 h-7" />
           </div>
-          <h3 className="text-xl font-black text-white">
-            Masuk dengan Google
+          <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+            Masuk ke Kata Siapa
           </h3>
-          <p className="text-xs text-zinc-400 mt-1">
-            Lanjutkan ke <span className="text-pink-400 font-bold">KataSiapa</span>
+          <p className="text-xs sm:text-sm text-zinc-400 mt-1 max-w-xs mx-auto">
+            Masuk dengan Akun Google untuk simpan pertanyaan favorit dan rekam obrolan serumu.
           </p>
         </div>
 
-        {loading ? (
-          <div className="py-12 flex flex-col items-center justify-center space-y-3">
-            <Loader2 className="w-8 h-8 text-pink-500 animate-spin" />
-            <p className="text-xs text-zinc-400 font-medium">
-              Menghubungkan akun Google kamu...
+        {/* Peringatan jika terdeteksi di dalam In-App Browser (WhatsApp / Instagram) */}
+        {isInAppBrowser && (
+          <div className="mb-5 p-3.5 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-200 text-xs space-y-2 relative z-10">
+            <div className="flex items-center gap-2 font-bold text-amber-300">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0 text-amber-400" />
+              <span>In-App Browser Terdeteksi</span>
+            </div>
+            <p className="text-[11px] leading-relaxed text-amber-200/90">
+              Google memblokir login dari aplikasi seperti WhatsApp atau Instagram. Silakan buka halaman ini di browser utama (Chrome atau Safari).
             </p>
-          </div>
-        ) : !isCustom ? (
-          <div className="space-y-3">
-            <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider px-1">
-              Pilih Akun Google Kamu
-            </div>
-
-            <div className="space-y-2">
-              {defaultAccounts.map((acc) => (
-                <button
-                  key={acc.email}
-                  onClick={() => handleSelectAccount(acc.name, acc.email)}
-                  className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.09] border border-white/10 hover:border-pink-500/40 transition text-left group"
-                >
-                  <div
-                    className={`w-10 h-10 rounded-full ${acc.avatarColor} text-white font-bold flex items-center justify-center flex-shrink-0 text-sm shadow-md group-hover:scale-105 transition-transform`}
-                  >
-                    {acc.initial}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="text-sm font-bold text-white truncate">
-                      {acc.name}
-                    </div>
-                    <div className="text-xs text-zinc-400 truncate">
-                      {acc.email}
-                    </div>
-                  </div>
-                  <div className="text-xs text-zinc-500 group-hover:text-pink-400 transition">
-                    Pilih →
-                  </div>
-                </button>
-              ))}
-
-              {/* Tambah Akun Google Lain */}
-              <button
-                onClick={() => setIsCustom(true)}
-                className="w-full flex items-center gap-3.5 p-3.5 rounded-2xl bg-white/[0.02] hover:bg-white/[0.06] border border-dashed border-white/20 hover:border-pink-500/40 transition text-left text-zinc-300 hover:text-white"
-              >
-                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 text-zinc-400">
-                  <UserPlus className="w-4 h-4" />
-                </div>
-                <div className="text-xs font-bold">
-                  Gunakan Akun Google / Gmail Lainnya
-                </div>
-              </button>
-            </div>
-
-            <div className="pt-4 flex items-center justify-center gap-1.5 text-[10px] text-zinc-500">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Google Sandbox OAuth &bull; Akses Aman &amp; Terverifikasi</span>
-            </div>
-          </div>
-        ) : (
-          <form onSubmit={handleCustomSubmit} className="space-y-4">
-            <div>
-              <label className="text-xs font-bold text-zinc-300 mb-1.5 block">
-                Nama Akun Google
-              </label>
-              <input
-                type="text"
-                required
-                autoFocus
-                placeholder="Contoh: Rian Pratama"
-                value={customName}
-                onChange={(e) => setCustomName(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-bold text-zinc-300 mb-1.5 block">
-                Alamat Gmail
-              </label>
-              <input
-                type="email"
-                placeholder="namakamu@gmail.com"
-                value={customEmail}
-                onChange={(e) => setCustomEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-black/60 border border-white/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-pink-500 transition"
-              />
-            </div>
-
             <button
-              type="submit"
-              disabled={!customName.trim()}
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 via-rose-500 to-violet-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-pink-500/25 hover:opacity-95 active:scale-[0.99] transition flex items-center justify-center gap-2 disabled:opacity-40"
+              onClick={handleCopyLink}
+              className="w-full py-2 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-bold transition flex items-center justify-center gap-1.5"
             >
-              <GoogleLogo className="w-4 h-4" />
-              <span>Masuk dengan Akun Ini</span>
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+              <span>{copied ? 'Link Berhasil Disalin!' : 'Salin Link untuk Buka di Chrome/Safari'}</span>
             </button>
-
-            <button
-              type="button"
-              onClick={() => setIsCustom(false)}
-              className="w-full text-center text-xs text-zinc-400 hover:text-white transition pt-1"
-            >
-              ← Kembali ke Pilihan Akun
-            </button>
-          </form>
+          </div>
         )}
+
+        {/* Pesan Error */}
+        {errorMessage && (
+          <div className="mb-4 p-3 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-300 text-xs flex items-start gap-2 relative z-10">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-400 mt-0.5" />
+            <p className="leading-snug">{errorMessage}</p>
+          </div>
+        )}
+
+        {/* Tombol Utama: Masuk dengan Google (Pedoman Resmi Google) */}
+        <div className="space-y-3 relative z-10">
+          <button
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full h-12 px-4 rounded-2xl bg-white hover:bg-zinc-100 text-zinc-900 font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-3 active:scale-[0.98] disabled:opacity-75 cursor-pointer"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin text-zinc-600" />
+                <span>Menghubungkan ke Google...</span>
+              </>
+            ) : (
+              <>
+                <GoogleLogo className="w-5 h-5 flex-shrink-0" />
+                <span>Masuk dengan Google</span>
+              </>
+            )}
+          </button>
+
+          {/* Toggle Sandbox Mode untuk Developer / Uji Coba */}
+          <div className="pt-2 text-center">
+            <button
+              onClick={() => setShowSandbox(!showSandbox)}
+              className="text-[11px] text-zinc-400 hover:text-zinc-200 transition underline underline-offset-2"
+            >
+              {showSandbox ? 'Sembunyikan mode uji coba sandbox' : 'Uji coba instan tanpa kunci Google (Mode Sandbox)'}
+            </button>
+          </div>
+
+          {/* Panel Uji Coba Sandbox Instan */}
+          {showSandbox && (
+            <div className="mt-3 p-4 rounded-2xl bg-black/40 border border-white/10 space-y-3 animate-fadeIn text-left">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-pink-400">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Pilih Akun Uji Coba Cepat:</span>
+              </div>
+              <div className="space-y-2">
+                {[
+                  { name: 'Bintang Utama', email: 'bintang.utama@gmail.com', initial: 'B', color: 'bg-indigo-600' },
+                  { name: 'Stephen Wijaya', email: 'stephenwijaya@gmail.com', initial: 'S', color: 'bg-emerald-600' },
+                ].map((acc) => (
+                  <button
+                    key={acc.email}
+                    onClick={() => handleSandboxLogin(acc.name, acc.email)}
+                    className="w-full p-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 transition flex items-center gap-2.5 text-left"
+                  >
+                    <div className={`w-7 h-7 rounded-full ${acc.color} text-white font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-sm`}>
+                      {acc.initial}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-white truncate">{acc.name}</p>
+                      <p className="text-[10px] text-zinc-400 truncate">{acc.email}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+
+              {/* Atau masukkan nama kustom */}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (!customName.trim()) return;
+                  const email = customEmail.trim() || `${customName.toLowerCase().replace(/[^a-z0-9]/g, '')}@gmail.com`;
+                  handleSandboxLogin(customName.trim(), email);
+                }}
+                className="pt-2 border-t border-white/10 space-y-2"
+              >
+                <input
+                  type="text"
+                  placeholder="Ketik nama kamu..."
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  className="w-full px-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-pink-500"
+                />
+                <button
+                  type="submit"
+                  disabled={!customName.trim()}
+                  className="w-full py-2 rounded-xl bg-gradient-to-r from-pink-500 to-violet-600 text-white font-bold text-xs hover:opacity-90 disabled:opacity-50 transition"
+                >
+                  Masuk dengan Nama Ini
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
+
+        {/* Footer info privasi */}
+        <p className="mt-5 text-center text-[10px] text-zinc-400 leading-relaxed relative z-10">
+          Dengan masuk, kamu menyetujui ruang berbagi cerita yang aman, saling menghargai, dan menjaga privasi teman bicaramu.
+        </p>
       </div>
     </div>
   );

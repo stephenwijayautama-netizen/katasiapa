@@ -20,6 +20,12 @@ html.light {
   --header-bg: rgba(255, 255, 255, 0.92);
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html,
 body {
   width: 100%;

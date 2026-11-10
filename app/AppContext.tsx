@@ -66,7 +66,7 @@ interface AppContextType {
   // Auth State
   isLoggedIn: boolean;
   userEmail: string;
-  login: (userData: { email: string; name?: string; username?: string }) => void;
+  login: (userData: { email: string; name?: string; username?: string; avatar?: string }) => void;
   logout: () => void;
   // Profile & Settings
   profile: UserProfile;
@@ -103,8 +103,30 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setIsMounted(true);
 
     // Check login state
-    const savedLoggedIn = localStorage.getItem('kartu_logged_in') === 'true';
-    const savedEmail = localStorage.getItem('kartu_user_email') || '';
+    let savedLoggedIn = localStorage.getItem('kartu_logged_in') === 'true';
+    let savedEmail = localStorage.getItem('kartu_user_email') || '';
+
+    // Check OAuth return params from Google callback
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('auth_success') === '1') {
+        const paramEmail = urlParams.get('email') || '';
+        const paramName = urlParams.get('name') || '';
+        const paramAvatar = urlParams.get('avatar') || '';
+        if (paramEmail) {
+          savedLoggedIn = true;
+          savedEmail = paramEmail;
+          localStorage.setItem('kartu_logged_in', 'true');
+          localStorage.setItem('kartu_user_email', paramEmail);
+          updateProfile({
+            name: paramName || paramEmail.split('@')[0],
+            avatar: paramAvatar || '',
+          });
+        }
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+
     setIsLoggedIn(savedLoggedIn);
     setUserEmail(savedEmail);
 
@@ -421,7 +443,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } catch (e) {}
   };
 
-  const login = (userData: { email: string; name?: string; username?: string }) => {
+  const login = (userData: { email: string; name?: string; username?: string; avatar?: string }) => {
     setIsLoggedIn(true);
     setUserEmail(userData.email);
     localStorage.setItem('kartu_logged_in', 'true');
@@ -437,10 +459,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       userData.username ||
       newName.toLowerCase().replace(/[^a-z0-9_]/g, '_').slice(0, 30);
 
-    updateProfile({
+    const profileUpdates: Partial<UserProfile> = {
       name: newName,
       username: newUsername,
-    });
+    };
+    if (userData.avatar) {
+      profileUpdates.avatar = userData.avatar;
+    }
+
+    updateProfile(profileUpdates);
   };
 
   const logout = () => {
