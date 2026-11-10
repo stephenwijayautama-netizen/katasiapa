@@ -41,13 +41,13 @@ export default function DreamsCard({
       ? 'text-sm sm:text-base md:text-[17px] leading-snug'
       : 'text-base sm:text-lg md:text-xl leading-snug';
 
-  // Scale classes with 100% fluid mobile responsiveness
+  // Scale classes with 100% fluid mobile responsiveness & centered layout
   const scaleClass =
     size === 'large'
-      ? 'w-[min(340px,calc(100vw-32px))] sm:w-[410px] aspect-[5/7]'
+      ? 'w-[min(340px,calc(100vw-32px))] sm:w-[410px] aspect-[5/7] mx-auto'
       : size === 'compact'
-      ? 'w-[210px] aspect-[5/7]'
-      : 'w-[min(300px,calc(100vw-36px))] sm:w-[350px] aspect-[5/7]';
+      ? 'w-[210px] aspect-[5/7] mx-auto'
+      : 'w-[min(310px,calc(100vw-36px))] sm:w-[330px] lg:w-[310px] xl:w-[320px] aspect-[5/7] mx-auto';
 
   return (
     <div

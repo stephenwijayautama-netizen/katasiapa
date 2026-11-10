@@ -49,11 +49,60 @@ export default function HomeClient() {
     .map((slug) => validThemes.find((th) => th.slug === slug))
     .filter(Boolean) as ThemeItem[];
 
-  // Posisi simetris 5 kartu di dalam kanvas 840px (dengan margin aman kiri/kanan/bawah agar kartu & rotasi tidak terpotong)
-  const fixedFanCards = [
+  // 1. DESKTOP: Formasi Kipas Lebar dengan Jarak Nyaman Antar-Kartu (920px Canvas)
+  const fixedFanCardsDesktop = [
     {
       slug: 'friendship',
-      left: '80px',
+      left: '75px',
+      top: '40px',
+      rotate: '-12deg',
+      scale: '0.88',
+      zIndex: 10,
+      opacity: 0.94,
+    },
+    {
+      slug: 'dreams',
+      left: '215px',
+      top: '20px',
+      rotate: '-6deg',
+      scale: '0.94',
+      zIndex: 20,
+      opacity: 0.98,
+    },
+    {
+      slug: 'kids',
+      left: '355px',
+      top: '0px',
+      rotate: '0deg',
+      scale: '1.04',
+      zIndex: 30,
+      opacity: 1,
+    },
+    {
+      slug: 'gratitude',
+      left: '495px',
+      top: '20px',
+      rotate: '6deg',
+      scale: '0.94',
+      zIndex: 20,
+      opacity: 0.98,
+    },
+    {
+      slug: 'love',
+      left: '635px',
+      top: '40px',
+      rotate: '12deg',
+      scale: '0.88',
+      zIndex: 10,
+      opacity: 0.94,
+    },
+  ];
+
+  // 2. MOBILE: Formasi Kipas Presisi Terpusat di Layar HP (840px Canvas)
+  const fixedFanCardsMobile = [
+    {
+      slug: 'friendship',
+      left: '95px',
       top: '36px',
       rotate: '-12deg',
       scale: '0.88',
@@ -62,7 +111,7 @@ export default function HomeClient() {
     },
     {
       slug: 'dreams',
-      left: '195px',
+      left: '205px',
       top: '18px',
       rotate: '-6deg',
       scale: '0.94',
@@ -80,7 +129,7 @@ export default function HomeClient() {
     },
     {
       slug: 'gratitude',
-      left: '435px',
+      left: '425px',
       top: '18px',
       rotate: '6deg',
       scale: '0.94',
@@ -89,7 +138,7 @@ export default function HomeClient() {
     },
     {
       slug: 'love',
-      left: '550px',
+      left: '535px',
       top: '36px',
       rotate: '12deg',
       scale: '0.88',
@@ -246,11 +295,11 @@ export default function HomeClient() {
           {/* SISI KANAN: Kipas 5 Kartu Elegan Full-Scale */}
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col items-center justify-center">
             
-            {/* Kanvas Kipas Desktop (Tanpa overflow-hidden agar tepi dan bawah kartu utuh sempurna) */}
-            <div className="relative w-full max-w-[840px] h-[340px] xl:h-[390px] 2xl:h-[440px] mx-auto flex items-center justify-center">
-              <div className="relative w-[840px] h-[440px] scale-[0.66] xl:scale-[0.80] 2xl:scale-100 origin-center transition-transform">
+            {/* Kanvas Kipas Desktop dengan Jarak Nyaman Antar-Kartu */}
+            <div className="relative w-full max-w-[920px] h-[360px] xl:h-[400px] 2xl:h-[450px] mx-auto flex items-center justify-center">
+              <div className="relative w-[920px] h-[450px] scale-[0.66] xl:scale-[0.80] 2xl:scale-100 origin-center transition-transform">
                 {fanThemes.map((th, i) => {
-                  const cfg = fixedFanCards[i];
+                  const cfg = fixedFanCardsDesktop[i];
                   if (!th || !cfg) return null;
                   return (
                     <div
@@ -358,12 +407,12 @@ export default function HomeClient() {
             </a>
           </div>
 
-          {/* Kipas Kartu Responsif Mobile */}
+          {/* Kipas Kartu Responsif Mobile (100% Center di Layar HP) */}
           <div className="w-full max-w-full flex flex-col items-center justify-center py-2 select-none">
-            <div className="relative w-[320px] min-[390px]:w-[350px] min-[420px]:w-[375px] sm:w-[560px] md:w-[680px] h-[175px] min-[390px]:h-[188px] min-[420px]:h-[200px] sm:h-[295px] md:h-[358px] mx-auto flex items-center justify-center">
-              <div className="absolute top-0 left-0 w-[840px] h-[440px] origin-top-left scale-[0.38] min-[390px]:scale-[0.415] min-[420px]:scale-[0.445] sm:scale-[0.666] md:scale-[0.81]">
+            <div className="relative w-full max-w-[340px] min-[390px]:max-w-[365px] min-[420px]:max-w-[390px] h-[180px] min-[390px]:h-[190px] min-[420px]:h-[205px] sm:h-[280px] md:h-[340px] mx-auto flex items-center justify-center">
+              <div className="relative w-[840px] h-[440px] scale-[0.40] min-[390px]:scale-[0.425] min-[420px]:scale-[0.455] sm:scale-[0.62] md:scale-[0.76] origin-center flex-shrink-0 transition-transform">
                 {fanThemes.map((th, i) => {
-                  const cfg = fixedFanCards[i];
+                  const cfg = fixedFanCardsMobile[i];
                   if (!th || !cfg) return null;
                   return (
                     <div
@@ -453,18 +502,19 @@ export default function HomeClient() {
           </p>
         </div>
 
-        {/* Grid Kartu Responsif: Mobile 1 Kolom, Tablet 2 Kolom, Desktop 3-4 Kolom */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-8 justify-items-center">
+        {/* Grid Kartu Responsif: Mobile 1 Kolom Center, Tablet 2 Kolom, Desktop 3-4 Kolom Berjarak Rapi */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 xl:gap-12 justify-items-center">
           {validThemes.map((th) => (
-            <div key={th.slug} className="w-full flex justify-center">
+            <div key={th.slug} className="w-full flex justify-center items-center">
               <div
                 onClick={() => handleCardClick(th)}
-                className="w-full max-w-[340px] sm:max-w-[360px] mx-auto cursor-pointer transition-all duration-300 hover:scale-[1.04] hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(236,72,153,0.3)] active:scale-95"
+                className="w-full flex justify-center items-center cursor-pointer transition-all duration-300 hover:scale-[1.04] hover:-translate-y-2 hover:shadow-[0_20px_45px_rgba(236,72,153,0.3)] active:scale-95"
               >
                 <ThemeCard
                   title={th.titleEn}
                   slug={th.slug}
                   gradient={th.gradient}
+                  className="mx-auto"
                 />
               </div>
             </div>
