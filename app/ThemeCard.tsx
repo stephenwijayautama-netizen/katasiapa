@@ -65,7 +65,7 @@ export default function ThemeCard({
   const sizeClasses = size === 'large'
     ? 'w-[min(340px,calc(100vw-32px))] sm:w-[375px] aspect-[5/7]'
     : size === 'compact'
-    ? 'w-[min(260px,calc(100vw-48px))] sm:w-[290px] aspect-[5/7]'
+    ? 'w-[210px] aspect-[5/7]'
     : 'w-[min(280px,calc(100vw-36px))] sm:w-[320px] aspect-[5/7]';
 
   const handleClick = (e: React.MouseEvent) => {

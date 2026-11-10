@@ -30,7 +30,9 @@ export default function KidsCard({
   // Responsive font size based on text length to prevent truncation
   const textLength = question.length;
   const questionFontSize =
-    textLength > 120
+    size === 'compact'
+      ? 'text-[11px] leading-snug'
+      : textLength > 120
       ? 'text-xs sm:text-sm md:text-[15px] leading-snug'
       : textLength > 75
       ? 'text-sm sm:text-base md:text-[17px] leading-snug'
@@ -41,7 +43,7 @@ export default function KidsCard({
     size === 'large'
       ? 'w-[min(340px,calc(100vw-32px))] sm:w-[410px] aspect-[5/7]'
       : size === 'compact'
-      ? 'w-[min(260px,calc(100vw-48px))] sm:w-[290px] aspect-[5/7]'
+      ? 'w-[210px] aspect-[5/7]'
       : 'w-[min(300px,calc(100vw-36px))] sm:w-[350px] aspect-[5/7]';
 
   return (
@@ -316,7 +318,11 @@ export default function KidsCard({
       </svg>
 
       {/* Bottom Question Box (Exact Reference Design - Dynamic Auto Fit) */}
-      <div className="absolute left-3.5 right-3.5 sm:left-5 sm:right-5 bottom-3.5 sm:bottom-5 min-h-[125px] sm:min-h-[142px] max-h-[185px] box-border p-3.5 sm:p-5 flex flex-col justify-center gap-1.5 rounded-[24px] sm:rounded-[30px] bg-white/95 border border-white/70 shadow-lg text-[#0B2B3A] overflow-y-auto no-scrollbar">
+      <div className={`absolute ${
+        size === 'compact'
+          ? 'left-3 right-3 bottom-3 min-h-[92px] p-2.5 rounded-[18px]'
+          : 'left-3.5 right-3.5 sm:left-5 sm:right-5 bottom-3.5 sm:bottom-5 min-h-[125px] sm:min-h-[142px] p-3.5 sm:p-5 rounded-[24px] sm:rounded-[30px]'
+      } max-h-[185px] box-border flex flex-col justify-center gap-1.5 bg-white/95 border border-white/70 shadow-lg text-[#0B2B3A] overflow-y-auto no-scrollbar`}>
         <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-black tracking-widest uppercase opacity-85 flex-shrink-0">
           <span suppressHydrationWarning>{levelLabel}</span>
           <span className="flex gap-1.5">

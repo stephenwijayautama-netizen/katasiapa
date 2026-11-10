@@ -49,52 +49,52 @@ export default function HomeClient() {
     .map((slug) => validThemes.find((th) => th.slug === slug))
     .filter(Boolean) as ThemeItem[];
 
-  // Posisi simetris 5 kartu di dalam kanvas tetap 720px (diskalasi otomatis sesuai lebar layar)
+  // Posisi simetris 5 kartu di dalam kanvas 840px (dengan margin aman kiri/kanan/bawah agar kartu & rotasi tidak terpotong)
   const fixedFanCards = [
     {
       slug: 'friendship',
-      left: '0px',
-      top: '28px',
-      rotate: '-14deg',
+      left: '80px',
+      top: '36px',
+      rotate: '-12deg',
       scale: '0.88',
       zIndex: 10,
-      opacity: 0.92,
+      opacity: 0.94,
     },
     {
       slug: 'dreams',
-      left: '122px',
-      top: '12px',
-      rotate: '-7deg',
+      left: '195px',
+      top: '18px',
+      rotate: '-6deg',
       scale: '0.94',
       zIndex: 20,
-      opacity: 0.96,
+      opacity: 0.98,
     },
     {
       slug: 'kids',
-      left: '245px',
+      left: '315px',
       top: '0px',
       rotate: '0deg',
-      scale: '1.05',
+      scale: '1.04',
       zIndex: 30,
       opacity: 1,
     },
     {
       slug: 'gratitude',
-      left: '368px',
-      top: '12px',
-      rotate: '7deg',
+      left: '435px',
+      top: '18px',
+      rotate: '6deg',
       scale: '0.94',
       zIndex: 20,
-      opacity: 0.96,
+      opacity: 0.98,
     },
     {
       slug: 'love',
-      left: '490px',
-      top: '28px',
-      rotate: '14deg',
+      left: '550px',
+      top: '36px',
+      rotate: '12deg',
       scale: '0.88',
       zIndex: 10,
-      opacity: 0.92,
+      opacity: 0.94,
     },
   ];
 
@@ -246,9 +246,9 @@ export default function HomeClient() {
           {/* SISI KANAN: Kipas 5 Kartu Elegan Full-Scale */}
           <div className="lg:col-span-7 xl:col-span-7 flex flex-col items-center justify-center">
             
-            {/* Kanvas Kipas 720px Desktop */}
-            <div className="relative w-[720px] h-[390px] mx-auto overflow-hidden">
-              <div className="absolute top-0 left-0 w-[720px] h-[390px]">
+            {/* Kanvas Kipas Desktop (Tanpa overflow-hidden agar tepi dan bawah kartu utuh sempurna) */}
+            <div className="relative w-full max-w-[840px] h-[340px] xl:h-[390px] 2xl:h-[440px] mx-auto flex items-center justify-center">
+              <div className="relative w-[840px] h-[440px] scale-[0.66] xl:scale-[0.80] 2xl:scale-100 origin-center transition-transform">
                 {fanThemes.map((th, i) => {
                   const cfg = fixedFanCards[i];
                   if (!th || !cfg) return null;
@@ -271,7 +271,7 @@ export default function HomeClient() {
                         slug={th.slug}
                         active={i === 2}
                         size="compact"
-                        className="!w-[230px] aspect-[5/7] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_60px_rgba(236,72,153,0.4)]"
+                        className="shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:shadow-[0_25px_60px_rgba(236,72,153,0.4)]"
                       />
                     </div>
                   );
@@ -359,9 +359,9 @@ export default function HomeClient() {
           </div>
 
           {/* Kipas Kartu Responsif Mobile */}
-          <div className="w-full max-w-full flex flex-col items-center justify-center py-2 select-none overflow-hidden">
-            <div className="relative w-[336px] min-[390px]:w-[360px] sm:w-[540px] md:w-[640px] h-[185px] min-[390px]:h-[198px] sm:h-[295px] md:h-[350px] mx-auto flex items-center justify-center overflow-hidden">
-              <div className="absolute top-0 left-0 w-[720px] h-[390px] origin-top-left scale-[0.466] min-[390px]:scale-[0.50] sm:scale-[0.75] md:scale-[0.888]">
+          <div className="w-full max-w-full flex flex-col items-center justify-center py-2 select-none">
+            <div className="relative w-[320px] min-[390px]:w-[350px] min-[420px]:w-[375px] sm:w-[560px] md:w-[680px] h-[175px] min-[390px]:h-[188px] min-[420px]:h-[200px] sm:h-[295px] md:h-[358px] mx-auto flex items-center justify-center">
+              <div className="absolute top-0 left-0 w-[840px] h-[440px] origin-top-left scale-[0.38] min-[390px]:scale-[0.415] min-[420px]:scale-[0.445] sm:scale-[0.666] md:scale-[0.81]">
                 {fanThemes.map((th, i) => {
                   const cfg = fixedFanCards[i];
                   if (!th || !cfg) return null;
@@ -384,7 +384,7 @@ export default function HomeClient() {
                         slug={th.slug}
                         active={i === 2}
                         size="compact"
-                        className="!w-[230px] aspect-[5/7] shadow-[0_15px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_50px_rgba(236,72,153,0.35)]"
+                        className="shadow-[0_15px_35px_rgba(0,0,0,0.6)]"
                       />
                     </div>
                   );

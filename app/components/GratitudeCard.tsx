@@ -33,7 +33,9 @@ export default function GratitudeCard({
   // Responsive font size based on text length to prevent text overflow
   const textLength = question.length;
   const questionFontSize =
-    textLength > 120
+    size === 'compact'
+      ? 'text-[11px] leading-snug'
+      : textLength > 120
       ? 'text-xs sm:text-sm md:text-[15px] leading-snug'
       : textLength > 75
       ? 'text-sm sm:text-base md:text-[17px] leading-snug'
@@ -44,7 +46,7 @@ export default function GratitudeCard({
     size === 'large'
       ? 'w-[min(340px,calc(100vw-32px))] sm:w-[410px] aspect-[5/7]'
       : size === 'compact'
-      ? 'w-[min(260px,calc(100vw-48px))] sm:w-[290px] aspect-[5/7]'
+      ? 'w-[210px] aspect-[5/7]'
       : 'w-[min(300px,calc(100vw-36px))] sm:w-[350px] aspect-[5/7]';
 
   return (
@@ -275,7 +277,11 @@ export default function GratitudeCard({
       </div>
 
       {/* Bottom Question Card Box */}
-      <div className="absolute left-[6%] right-[6%] bottom-[4%] min-h-[110px] sm:min-h-[128px] max-h-[148px] px-4 sm:px-6 py-3 sm:py-3.5 flex flex-col justify-center gap-1.5 rounded-3xl bg-black/25 backdrop-blur-md border border-white/20 text-white shadow-xl z-20 overflow-hidden">
+      <div className={`absolute left-[6%] right-[6%] bottom-[4%] ${
+        size === 'compact'
+          ? 'min-h-[92px] px-3 py-2.5 rounded-2xl'
+          : 'min-h-[110px] sm:min-h-[128px] max-h-[148px] px-4 sm:px-6 py-3 sm:py-3.5 rounded-3xl'
+      } flex flex-col justify-center gap-1.5 bg-black/25 backdrop-blur-md border border-white/20 text-white shadow-xl z-20 overflow-hidden`}>
         {/* Level Tag & Dots */}
         <div className="flex items-center justify-between text-[11px] font-bold tracking-widest text-white/85">
           <span>{levelLabel}</span>

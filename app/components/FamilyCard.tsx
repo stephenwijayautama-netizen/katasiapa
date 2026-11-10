@@ -40,7 +40,7 @@ export default function FamilyCard({
     size === 'large'
       ? 'w-[min(340px,calc(100vw-32px))] sm:w-[410px] aspect-[5/7]'
       : size === 'compact'
-      ? 'w-[min(260px,calc(100vw-48px))] sm:w-[290px] aspect-[5/7]'
+      ? 'w-[210px] aspect-[5/7]'
       : 'w-[min(300px,calc(100vw-36px))] sm:w-[350px] aspect-[5/7]';
 
   return (
