@@ -27,16 +27,11 @@ import {
   X,
   Layers,
   ArrowRight,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 
 export default function HomeClient() {
   const { t, themes, cards } = useApp();
   const [infoThemeModal, setInfoThemeModal] = useState<ThemeItem | null>(null);
-  const [activeMobileIndex, setActiveMobileIndex] = useState(2); // default kartu Kids di tengah
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
-  const [touchEndX, setTouchEndX] = useState<number | null>(null);
 
   // Ambil tema resmi termasuk edisi spesial Dunia Si Kecil & Pertanyaan Kustom
   const validThemes = themes.filter((th) =>
@@ -54,105 +49,33 @@ export default function HomeClient() {
     .map((slug) => validThemes.find((th) => th.slug === slug))
     .filter(Boolean) as ThemeItem[];
 
-  // Navigasi kartu di HP (geser/klik tema)
-  const handleSelectCard = (index: number) => {
-    soundEngine.playFlip();
-    setActiveMobileIndex(index);
-  };
-
-  const handleNextCard = () => {
-    soundEngine.playFlip();
-    setActiveMobileIndex((prev) => (prev < fanThemes.length - 1 ? prev + 1 : 0));
-  };
-
-  const handlePrevCard = () => {
-    soundEngine.playFlip();
-    setActiveMobileIndex((prev) => (prev > 0 ? prev - 1 : fanThemes.length - 1));
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.targetTouches[0].clientX);
-    setTouchEndX(null);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEndX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX || !touchEndX) return;
-    const distance = touchStartX - touchEndX;
-    if (distance > 40) {
-      handleNextCard();
-    } else if (distance < -40) {
-      handlePrevCard();
-    }
-  };
-
-  // Posisi dan perspektif 3D kartu kipas di HP
-  const getMobileCardStyle = (diff: number) => {
-    if (diff === 0) {
-      return {
-        transform: 'translateX(0px) translateY(0px) rotate(0deg) scale(1)',
-        zIndex: 30,
-        opacity: 1,
-        filter: 'brightness(1)',
-        pointerEvents: 'auto' as const,
-      };
-    }
-    if (diff === -1) {
-      return {
-        transform: 'translateX(-40px) translateY(6px) rotate(-6.5deg) scale(0.92)',
-        zIndex: 20,
-        opacity: 0.9,
-        filter: 'brightness(0.92)',
-        pointerEvents: 'auto' as const,
-      };
-    }
-    if (diff === 1) {
-      return {
-        transform: 'translateX(40px) translateY(6px) rotate(6.5deg) scale(0.92)',
-        zIndex: 20,
-        opacity: 0.9,
-        filter: 'brightness(0.92)',
-        pointerEvents: 'auto' as const,
-      };
-    }
-    if (diff === -2) {
-      return {
-        transform: 'translateX(-74px) translateY(14px) rotate(-13deg) scale(0.85)',
-        zIndex: 10,
-        opacity: 0.75,
-        filter: 'brightness(0.82)',
-        pointerEvents: 'auto' as const,
-      };
-    }
-    if (diff === 2) {
-      return {
-        transform: 'translateX(74px) translateY(14px) rotate(13deg) scale(0.85)',
-        zIndex: 10,
-        opacity: 0.75,
-        filter: 'brightness(0.82)',
-        pointerEvents: 'auto' as const,
-      };
-    }
-    const sign = Math.sign(diff);
-    return {
-      transform: `translateX(${sign * 95}px) translateY(22px) rotate(${sign * 18}deg) scale(0.76)`,
-      zIndex: 5,
-      opacity: 0.35,
-      filter: 'brightness(0.65)',
-      pointerEvents: 'none' as const,
-    };
-  };
-
-  // Konfigurasi kipas kartu simetris 5 kartu untuk Desktop (layar >= 768px)
-  const fanConfig = [
-    { rotate: '-12deg', scale: '0.88', opacity: 0.9, translate: '20px', zIndex: 10 },
-    { rotate: '-6deg', scale: '0.94', opacity: 0.96, translate: '8px', zIndex: 15 },
-    { rotate: '0deg', scale: '1.04', opacity: 1, translate: '-12px', zIndex: 25 },
-    { rotate: '6deg', scale: '0.94', opacity: 0.96, translate: '8px', zIndex: 15 },
-    { rotate: '12deg', scale: '0.88', opacity: 0.9, translate: '20px', zIndex: 10 },
+  // Konfigurasi 5 kartu kipas simetris untuk mobile & desktop
+  const fanCardStyles = [
+    {
+      // 0: Friendship (Paling Kiri)
+      className:
+        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer -translate-x-[94px] sm:-translate-x-[140px] md:-translate-x-[210px] translate-y-[14px] sm:translate-y-[18px] md:translate-y-[24px] -rotate-[14deg] sm:-rotate-[13deg] md:-rotate-[12deg] scale-[0.62] xs:scale-[0.66] sm:scale-[0.80] md:scale-[0.90] lg:scale-100 z-10 opacity-90 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+    },
+    {
+      // 1: Dreams (Kiri Tengah)
+      className:
+        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer -translate-x-[47px] sm:-translate-x-[70px] md:-translate-x-[105px] translate-y-[6px] sm:translate-y-[8px] md:translate-y-[10px] -rotate-[7deg] sm:-rotate-[6.5deg] md:-rotate-[6deg] scale-[0.66] xs:scale-[0.70] sm:scale-[0.85] md:scale-[0.95] lg:scale-[1.02] z-20 opacity-95 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+    },
+    {
+      // 2: Kids (Tengah - Paling Menonjol & Tinggi)
+      className:
+        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-0 -translate-y-[6px] sm:-translate-y-[10px] md:-translate-y-[14px] rotate-0 scale-[0.72] xs:scale-[0.76] sm:scale-[0.92] md:scale-[1.02] lg:scale-[1.08] z-30 opacity-100 hover:z-40 hover:scale-110 hover:-translate-y-3 active:scale-95',
+    },
+    {
+      // 3: Gratitude (Kanan Tengah)
+      className:
+        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-[47px] sm:translate-x-[70px] md:translate-x-[105px] translate-y-[6px] sm:translate-y-[8px] md:translate-y-[10px] rotate-[7deg] sm:rotate-[6.5deg] md:rotate-[6deg] scale-[0.66] xs:scale-[0.70] sm:scale-[0.85] md:scale-[0.95] lg:scale-[1.02] z-20 opacity-95 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+    },
+    {
+      // 4: Love (Paling Kanan)
+      className:
+        'absolute transition-all duration-300 ease-out origin-bottom cursor-pointer translate-x-[94px] sm:translate-x-[140px] md:translate-x-[210px] translate-y-[14px] sm:translate-y-[18px] md:translate-y-[24px] rotate-[14deg] sm:rotate-[13deg] md:rotate-[12deg] scale-[0.62] xs:scale-[0.66] sm:scale-[0.80] md:scale-[0.90] lg:scale-100 z-10 opacity-90 hover:z-40 hover:scale-105 hover:-translate-y-1 active:scale-95',
+    },
   ];
 
   const steps = [
@@ -260,137 +183,48 @@ export default function HomeClient() {
           </a>
         </div>
 
-        {/* ══════════════════════════════════════════════════════════════════
-            1A. TAMPILAN KARTU INTERAKTIF DI HP (Mobile Deck 3D Showcase)
-            Layar < 768px: Nyaman disentuh, swipe-friendly, teks jelas 100%
-           ══════════════════════════════════════════════════════════════════ */}
-        <div className="w-full flex md:hidden flex-col items-center justify-center py-2 select-none relative overflow-hidden">
-          {/* Deck Container dengan touch gesture */}
-          <div
-            className="relative w-full max-w-[340px] xs:max-w-[370px] h-[360px] xs:h-[385px] flex items-center justify-center touch-pan-y"
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-          >
-            {/* Tombol Panah Kiri */}
-            <button
-              onClick={handlePrevCard}
-              className="absolute left-0 z-40 p-2 rounded-full bg-black/60 hover:bg-black/80 active:scale-90 text-white backdrop-blur-md border border-white/20 transition shadow-xl"
-              aria-label="Tema Sebelumnya"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-
-            {/* Kartu 3D Fan Stack di HP */}
+        {/* ── Kipas Kartu (5 kartu tema asli, responsif penuh di HP & Laptop) ── */}
+        <div className="w-full flex flex-col items-center justify-center py-4 sm:py-6 select-none overflow-visible">
+          {/* Kontainer Kipas Kartu Simetris */}
+          <div className="relative w-full max-w-[360px] xs:max-w-[400px] sm:max-w-[560px] md:max-w-[720px] lg:max-w-[820px] h-[230px] xs:h-[250px] sm:h-[310px] md:h-[370px] lg:h-[410px] flex items-center justify-center">
             {fanThemes.map((th, i) => {
-              const diff = i - activeMobileIndex;
-              const style = getMobileCardStyle(diff);
+              const styleConfig = fanCardStyles[i];
+              if (!th || !styleConfig) return null;
               return (
                 <div
                   key={th.slug}
-                  className="absolute cursor-pointer will-change-transform"
-                  style={{
-                    ...style,
-                    transition: 'transform 0.35s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease, filter 0.3s ease',
-                  }}
-                  onClick={() => {
-                    if (diff === 0) {
-                      handleCardClick(th);
-                    } else {
-                      handleSelectCard(i);
-                    }
-                  }}
+                  className={styleConfig.className}
+                  onClick={() => handleCardClick(th)}
+                  title={`Lihat detail kartu ${th.titleEn}`}
                 >
                   <ThemeCard
                     title={th.titleEn}
                     slug={th.slug}
-                    active={diff === 0}
+                    active={i === 2}
                     size="compact"
-                    className="!w-[230px] xs:!w-[245px] aspect-[5/7] shadow-[0_15px_40px_rgba(0,0,0,0.7)]"
+                    className="!w-[220px] sm:!w-[240px] lg:!w-[260px] aspect-[5/7] shadow-[0_15px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_20px_50px_rgba(236,72,153,0.35)]"
                   />
                 </div>
               );
             })}
-
-            {/* Tombol Panah Kanan */}
-            <button
-              onClick={handleNextCard}
-              className="absolute right-0 z-40 p-2 rounded-full bg-black/60 hover:bg-black/80 active:scale-90 text-white backdrop-blur-md border border-white/20 transition shadow-xl"
-              aria-label="Tema Berikutnya"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
           </div>
 
-          {/* Chips Pemilih Tema di HP */}
-          <div className="flex items-center justify-center gap-1.5 flex-wrap px-2 mt-3 max-w-sm">
-            {fanThemes.map((th, i) => {
-              const isActive = i === activeMobileIndex;
-              return (
-                <button
-                  key={th.slug}
-                  onClick={() => handleSelectCard(i)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
-                    isActive
-                      ? 'bg-gradient-to-r from-pink-500 to-violet-600 text-white shadow-lg shadow-pink-500/30 scale-105 border border-pink-400/40'
-                      : 'bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  <span className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-white animate-pulse' : 'bg-zinc-500'}`} />
-                  <span>{th.titleEn}</span>
-                </button>
-              );
-            })}
+          {/* Chips Pemilih Tema Interaktif di Bawah Kipas */}
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap px-3 mt-4 max-w-xl">
+            {fanThemes.map((th, i) => (
+              <button
+                key={th.slug}
+                onClick={() => handleCardClick(th)}
+                className="px-3 py-1 rounded-full text-xs font-bold transition-all duration-200 bg-white/5 border border-white/10 text-zinc-300 hover:text-white hover:bg-white/15 hover:border-pink-500/40 active:scale-95 flex items-center gap-1.5"
+              >
+                <span className={`w-1.5 h-1.5 rounded-full ${i === 2 ? 'bg-teal-400' : 'bg-pink-400'}`} />
+                <span>{th.titleEn}</span>
+              </button>
+            ))}
           </div>
 
-          {/* Label petunjuk interaktif di HP */}
-          <div className="mt-3 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-zinc-400 font-medium">
-            <Sparkles className="w-3.5 h-3.5 text-pink-400 flex-shrink-0" />
-            <span>Geser kartu / ketuk tema &middot; Ketuk kartu untuk detail</span>
-          </div>
-        </div>
-
-        {/* ══════════════════════════════════════════════════════════════════
-            1B. TAMPILAN KIPAS KARTU DI DESKTOP (Layar >= 768px)
-            Terbentang simetris 5 kartu elegan dari PDF
-           ══════════════════════════════════════════════════════════════════ */}
-        <div className="hidden md:flex flex-col items-center justify-center py-6 select-none w-full">
-          <div className="w-full max-w-5xl mx-auto flex items-end justify-center py-4 px-4 overflow-visible">
-            {fanConfig.map((fan, i) => {
-              const th = fanThemes[i] || validThemes[i];
-              if (!th) return null;
-              return (
-                <div
-                  key={th.slug}
-                  className="flex-shrink-0 items-end"
-                  style={{
-                    transform: `rotate(${fan.rotate}) scale(${fan.scale}) translateY(${fan.translate})`,
-                    opacity: fan.opacity,
-                    marginLeft: i === 0 ? '0' : '-115px',
-                    zIndex: fan.zIndex,
-                    transition: 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease',
-                  }}
-                >
-                  <div
-                    onClick={() => handleCardClick(th)}
-                    className="cursor-pointer transition-all duration-300 hover:scale-105 hover:-translate-y-4 active:scale-95 group"
-                    title={`Lihat detail kartu ${th.titleEn}`}
-                  >
-                    <ThemeCard
-                      title={th.titleEn}
-                      slug={th.slug}
-                      active={i === 2}
-                      size="compact"
-                      className="!w-[250px] lg:!w-[270px] aspect-[5/7] shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-                    />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Label petunjuk interaktif di Desktop */}
-          <div className="mt-5 flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs text-zinc-400 font-medium">
+          {/* Label Petunjuk Interaktif */}
+          <div className="mt-3 flex items-center justify-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] sm:text-xs text-zinc-400 font-medium">
             <Sparkles className="w-3.5 h-3.5 text-pink-400 flex-shrink-0" />
             <span>5 Tema Terfavorit &middot; Ketuk kartu untuk intip pertanyaan</span>
           </div>
